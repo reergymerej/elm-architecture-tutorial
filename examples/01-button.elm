@@ -6,10 +6,11 @@ import Html.Attributes exposing (disabled, value)
 
 
 main =
-    Html.beginnerProgram
-        { model = model
+    Html.program
+        { init = init
         , view = view
         , update = update
+        , subscriptions = subscriptions
         }
 
 
@@ -46,25 +47,31 @@ type Msg
     | ChangeValueToFetch String
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GetServerValue ->
-            { model
+            ( { model
                 | fetchingServerValue = True
                 , valueFromServer = ""
-            }
+              }
+            , Cmd.none
+            )
 
         ServerResponse ->
-            { model
+            ( { model
                 | fetchingServerValue = False
                 , valueFromServer = "a sweet fake response"
-            }
+              }
+            , Cmd.none
+            )
 
         ChangeValueToFetch newValue ->
-            { model
+            ( { model
                 | valueToFetch = newValue
-            }
+              }
+            , Cmd.none
+            )
 
 
 
@@ -91,3 +98,28 @@ view model =
             ]
             [ text "Fake server response" ]
         ]
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
+
+
+
+-- INIT
+
+
+init : ( Model, Cmd Msg )
+init =
+    ( { num = 0
+      , str = "hi"
+      , valueFromServer = ""
+      , fetchingServerValue = False
+      , valueToFetch = ""
+      }
+    , Cmd.none
+    )
