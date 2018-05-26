@@ -1,26 +1,39 @@
-import Html exposing (Html, button, div, text)
-import Html.Events exposing (onClick)
+module Main exposing (..)
 
+import Html exposing (Html, button, div, text, input)
+import Html.Events exposing (onClick, onInput)
+import Html.Attributes exposing (disabled, value)
 
 
 main =
-  Html.beginnerProgram
-    { model = model
-    , view = view
-    , update = update
-    }
+    Html.beginnerProgram
+        { model = model
+        , view = view
+        , update = update
+        }
 
 
 
 -- MODEL
 
 
-type alias Model = Int
+type alias Model =
+    { num : Int
+    , str : String
+    , valueFromServer : String
+    , fetchingServerValue : Bool
+    , valueToFetch : String
+    }
 
 
 model : Model
 model =
-  0
+    { num = 0
+    , str = "hi"
+    , valueFromServer = ""
+    , fetchingServerValue = False
+    , valueToFetch = ""
+    }
 
 
 
@@ -28,18 +41,30 @@ model =
 
 
 type Msg
-  = Increment
-  | Decrement
+    = GetServerValue
+    | ServerResponse
+    | ChangeValueToFetch String
 
 
 update : Msg -> Model -> Model
 update msg model =
-  case msg of
-    Increment ->
-      model + 1
+    case msg of
+        GetServerValue ->
+            { model
+                | fetchingServerValue = True
+                , valueFromServer = ""
+            }
 
-    Decrement ->
-      model - 1
+        ServerResponse ->
+            { model
+                | fetchingServerValue = False
+                , valueFromServer = "a sweet fake response"
+            }
+
+        ChangeValueToFetch newValue ->
+            { model
+                | valueToFetch = newValue
+            }
 
 
 
@@ -48,8 +73,21 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-  div []
-    [ button [ onClick Decrement ] [ text "-" ]
-    , div [] [ text (toString model) ]
-    , button [ onClick Increment ] [ text "+" ]
-    ]
+    div []
+        [ input
+            [ onInput ChangeValueToFetch
+            , value model.valueToFetch
+            ]
+            []
+        , div [] [ text ("value from server: " ++ model.valueFromServer) ]
+        , button
+            [ onClick GetServerValue
+            , disabled model.fetchingServerValue
+            ]
+            [ text "Go get server value" ]
+        , button
+            [ disabled (not model.fetchingServerValue)
+            , onClick ServerResponse
+            ]
+            [ text "Fake server response" ]
+        ]
