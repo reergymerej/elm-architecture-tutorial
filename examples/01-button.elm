@@ -3,6 +3,7 @@ module Main exposing (..)
 import Html exposing (Html, button, div, text, input)
 import Html.Events exposing (onClick, onInput)
 import Html.Attributes exposing (disabled, value)
+import Http exposing (Error)
 
 
 main =
@@ -45,6 +46,7 @@ type Msg
     = GetServerValue
     | ServerResponse
     | ChangeValueToFetch String
+    | NewResponseValue (Result Http.Error String)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -55,7 +57,7 @@ update msg model =
                 | fetchingServerValue = True
                 , valueFromServer = ""
               }
-            , Cmd.none
+            , getRandomGif model.valueToFetch
             )
 
         ServerResponse ->
@@ -69,6 +71,17 @@ update msg model =
         ChangeValueToFetch newValue ->
             ( { model
                 | valueToFetch = newValue
+              }
+            , Cmd.none
+            )
+
+        NewResponseValue (Err _) ->
+            ( model, Cmd.none )
+
+        NewResponseValue (Ok valueFromServer) ->
+            ( { model
+                | fetchingServerValue = False
+                , valueFromServer = valueFromServer
               }
             , Cmd.none
             )
@@ -107,6 +120,19 @@ view model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.none
+
+
+
+-- HTTP
+
+
+getRandomGif : String -> Cmd Msg
+getRandomGif topic =
+    let
+        url =
+            "http://localhost:3000/echo?value=" ++ topic
+    in
+        Http.send NewResponseValue (Http.getString url)
 
 
 
