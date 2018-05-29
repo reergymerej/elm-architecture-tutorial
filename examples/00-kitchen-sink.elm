@@ -28,9 +28,19 @@ type alias TaskList =
     List Task
 
 
+type User
+    = AnonymousUser
+    | NamedUser String
+
+
+type alias UserList =
+    List User
+
+
 type alias Model =
     { todoItems : TaskList
     , visiblity : Visibility
+    , users : UserList
     }
 
 
@@ -45,6 +55,13 @@ model =
           }
         ]
     , visiblity = All
+    , users =
+        [ AnonymousUser
+        , AnonymousUser
+        , NamedUser "AzureDiamond"
+        , NamedUser "Mr. Boop"
+        , AnonymousUser
+        ]
     }
 
 
@@ -111,6 +128,29 @@ renderTodoStuff model =
         ]
 
 
+renderUser : User -> Html.Html Msg
+renderUser user =
+    case user of
+        AnonymousUser ->
+            Html.div [] [ Html.text "Some Dude" ]
+
+        NamedUser name ->
+            Html.div [] [ Html.text name ]
+
+
+renderUsers : UserList -> Html.Html Msg
+renderUsers users =
+    Html.div []
+        (List.map renderUser users)
+
+
+renderAnonStuff : Model -> Html.Html Msg
+renderAnonStuff model =
+    Html.div []
+        [ (renderUsers model.users)
+        ]
+
+
 view : Model -> Html.Html Msg
 view model =
     Html.div []
@@ -120,6 +160,8 @@ view model =
             , Html.div []
                 [ Html.h3 [] [ Html.text "todo list" ]
                 , renderTodoStuff model
+                , Html.h3 [] [ Html.text "anonymous user" ]
+                , renderAnonStuff model
                 ]
             ]
         ]
