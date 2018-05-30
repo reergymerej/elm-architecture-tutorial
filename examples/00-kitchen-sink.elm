@@ -147,8 +147,13 @@ renderUsers users =
 renderAnonStuff : Model -> Html.Html Msg
 renderAnonStuff model =
     Html.div []
-        [ (renderUsers model.users)
+        [ renderUsers model.users
         ]
+
+
+renderTitle : String -> Html.Html Msg
+renderTitle title =
+    Html.h3 [] [ Html.text title ]
 
 
 view : Model -> Html.Html Msg
@@ -158,9 +163,9 @@ view model =
         , Html.div []
             [ Html.h2 [] [ Html.text "Union Types" ]
             , Html.div []
-                [ Html.h3 [] [ Html.text "todo list" ]
+                [ renderTitle "todo list"
                 , renderTodoStuff model
-                , Html.h3 [] [ Html.text "anonymous user" ]
+                , renderTitle "anonymous user"
                 , renderAnonStuff model
                 ]
             ]
