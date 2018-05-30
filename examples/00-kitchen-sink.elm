@@ -19,6 +19,15 @@ main =
 -}
 
 
+type Msg
+    = SetVisibilityActive
+    | SetVisibilityAll
+    | SetVisibilityComplete
+    | IncreaseCount
+    | DecreaseCount
+    | ResetCount
+
+
 type alias Markup =
     Html.Html Msg
 
@@ -78,14 +87,6 @@ model =
     }
 
 
-type Msg
-    = SetVisibilityActive
-    | SetVisibilityAll
-    | SetVisibilityComplete
-    | IncreaseCount
-    | DecreaseCount
-
-
 update : Msg -> Model -> Model
 update msg model =
     case msg of
@@ -103,6 +104,9 @@ update msg model =
 
         DecreaseCount ->
             { model | count = model.count - 1 }
+
+        ResetCount ->
+            { model | count = 0 }
 
 
 renderTodoItems : TaskList -> Markup
@@ -177,8 +181,8 @@ renderTitle title =
     Html.h3 [] [ Html.text title ]
 
 
-renderCountButton : Msg -> String -> Markup
-renderCountButton message label =
+renderClickableButton : Msg -> String -> Markup
+renderClickableButton message label =
     Html.button [ Html.Events.onClick message ] [ Html.text label ]
 
 
@@ -189,8 +193,9 @@ renderCounterStuff model =
             [ Html.span [] [ Html.text "count: " ]
             , Html.span [] [ Html.text (toString model.count) ]
             , Html.div []
-                [ renderCountButton DecreaseCount "down"
-                , renderCountButton IncreaseCount "up"
+                [ renderClickableButton DecreaseCount "down"
+                , renderClickableButton IncreaseCount "up"
+                , renderClickableButton ResetCount "reset"
                 ]
             ]
         ]
