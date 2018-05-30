@@ -26,6 +26,7 @@ type Msg
     | IncreaseCount
     | DecreaseCount
     | ResetCount
+    | ChangeTextReverseInput String
 
 
 type alias Markup =
@@ -62,6 +63,7 @@ type alias Model =
     , visiblity : Visibility
     , users : UserList
     , count : Int
+    , textReverseInput : String
     }
 
 
@@ -84,6 +86,7 @@ model =
         , AnonymousUser
         ]
     , count = 0
+    , textReverseInput = ""
     }
 
 
@@ -107,6 +110,9 @@ update msg model =
 
         ResetCount ->
             { model | count = 0 }
+
+        ChangeTextReverseInput value ->
+            { model | textReverseInput = value }
 
 
 renderTodoItems : TaskList -> Markup
@@ -201,6 +207,19 @@ renderCounterStuff model =
         ]
 
 
+reverseString : String -> String
+reverseString input =
+    String.reverse input
+
+
+renderTextReverseStuff : Model -> Markup
+renderTextReverseStuff model =
+    Html.div []
+        [ Html.input [ Html.Events.onInput ChangeTextReverseInput ] []
+        , Html.div [] [ Html.text (reverseString model.textReverseInput) ]
+        ]
+
+
 view : Model -> Markup
 view model =
     Html.div []
@@ -214,6 +233,8 @@ view model =
                 , renderAnonStuff model
                 , renderTitle "A Simple Counter"
                 , renderCounterStuff model
+                , renderTitle "Text Reverse"
+                , renderTextReverseStuff model
                 ]
             ]
         ]
