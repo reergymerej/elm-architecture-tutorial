@@ -52,6 +52,7 @@ type alias Model =
     { todoItems : TaskList
     , visiblity : Visibility
     , users : UserList
+    , count : Int
     }
 
 
@@ -73,6 +74,7 @@ model =
         , NamedUser "Mr. Boop"
         , AnonymousUser
         ]
+    , count = 0
     }
 
 
@@ -80,6 +82,8 @@ type Msg
     = SetVisibilityActive
     | SetVisibilityAll
     | SetVisibilityComplete
+    | IncreaseCount
+    | DecreaseCount
 
 
 update : Msg -> Model -> Model
@@ -93,6 +97,12 @@ update msg model =
 
         SetVisibilityComplete ->
             { model | visiblity = Completed }
+
+        IncreaseCount ->
+            { model | count = model.count + 1 }
+
+        DecreaseCount ->
+            { model | count = model.count - 1 }
 
 
 renderTodoItems : TaskList -> Markup
@@ -169,7 +179,16 @@ renderTitle title =
 
 renderCounterStuff : Model -> Markup
 renderCounterStuff model =
-    Html.div [] [ Html.text "counter here" ]
+    Html.div []
+        [ Html.div []
+            [ Html.span [] [ Html.text "count: " ]
+            , Html.span [] [ Html.text (toString model.count) ]
+            , Html.div []
+                [ Html.button [ Html.Events.onClick IncreaseCount ] [ Html.text "up" ]
+                , Html.button [ Html.Events.onClick DecreaseCount ] [ Html.text "down" ]
+                ]
+            ]
+        ]
 
 
 view : Model -> Markup
