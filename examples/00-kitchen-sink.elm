@@ -12,6 +12,17 @@ main =
         }
 
 
+
+{-
+   > our view function is producing a Html Msg value. This means that it is a chunk of HTML that can produce Msg values.
+   https://guide.elm-lang.org/architecture/user_input/buttons.html
+-}
+
+
+type alias Markup =
+    Html.Html Msg
+
+
 type alias Task =
     { task : String
     , complete : Bool
@@ -84,13 +95,13 @@ update msg model =
             { model | visiblity = Completed }
 
 
-renderTodoItems : TaskList -> Html.Html Msg
+renderTodoItems : TaskList -> Markup
 renderTodoItems list =
     Html.ul []
         (List.map (\item -> Html.li [] [ Html.text item.task ]) list)
 
 
-renderTodoVisibilityButton : String -> Msg -> Html.Html Msg
+renderTodoVisibilityButton : String -> Msg -> Markup
 renderTodoVisibilityButton text message =
     Html.button
         [ Html.Events.onClick message
@@ -98,7 +109,7 @@ renderTodoVisibilityButton text message =
         [ Html.text text ]
 
 
-renderTodoButtons : Html.Html Msg
+renderTodoButtons : Markup
 renderTodoButtons =
     Html.div []
         [ renderTodoVisibilityButton "Show All" SetVisibilityAll
@@ -120,7 +131,7 @@ filterTodoItems taskList visibility =
             List.filter (\task -> task.complete == True) taskList
 
 
-renderTodoStuff : Model -> Html.Html Msg
+renderTodoStuff : Model -> Markup
 renderTodoStuff model =
     Html.div []
         [ renderTodoItems (filterTodoItems model.todoItems model.visiblity)
@@ -128,7 +139,7 @@ renderTodoStuff model =
         ]
 
 
-renderUser : User -> Html.Html Msg
+renderUser : User -> Markup
 renderUser user =
     case user of
         AnonymousUser ->
@@ -138,25 +149,30 @@ renderUser user =
             Html.div [] [ Html.text name ]
 
 
-renderUsers : UserList -> Html.Html Msg
+renderUsers : UserList -> Markup
 renderUsers users =
     Html.div []
         (List.map renderUser users)
 
 
-renderAnonStuff : Model -> Html.Html Msg
+renderAnonStuff : Model -> Markup
 renderAnonStuff model =
     Html.div []
         [ renderUsers model.users
         ]
 
 
-renderTitle : String -> Html.Html Msg
+renderTitle : String -> Markup
 renderTitle title =
     Html.h3 [] [ Html.text title ]
 
 
-view : Model -> Html.Html Msg
+renderCounterStuff : Model -> Markup
+renderCounterStuff model =
+    Html.div [] [ Html.text "counter here" ]
+
+
+view : Model -> Markup
 view model =
     Html.div []
         [ Html.h1 [] [ Html.text "Kitchen Sink" ]
@@ -167,6 +183,8 @@ view model =
                 , renderTodoStuff model
                 , renderTitle "anonymous user"
                 , renderAnonStuff model
+                , renderTitle "A Simple Counter"
+                , renderCounterStuff model
                 ]
             ]
         ]
