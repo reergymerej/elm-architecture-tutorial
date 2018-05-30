@@ -177,6 +177,11 @@ renderTitle title =
     Html.h3 [] [ Html.text title ]
 
 
+renderCountButton : Msg -> String -> Markup
+renderCountButton message label =
+    Html.button [ Html.Events.onClick message ] [ Html.text label ]
+
+
 renderCounterStuff : Model -> Markup
 renderCounterStuff model =
     Html.div []
@@ -184,8 +189,8 @@ renderCounterStuff model =
             [ Html.span [] [ Html.text "count: " ]
             , Html.span [] [ Html.text (toString model.count) ]
             , Html.div []
-                [ Html.button [ Html.Events.onClick IncreaseCount ] [ Html.text "up" ]
-                , Html.button [ Html.Events.onClick DecreaseCount ] [ Html.text "down" ]
+                [ renderCountButton DecreaseCount "down"
+                , renderCountButton IncreaseCount "up"
                 ]
             ]
         ]
