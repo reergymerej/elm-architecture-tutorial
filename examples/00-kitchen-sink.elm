@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Html
+import Html.Attributes
 import Html.Events
 
 
@@ -27,6 +28,7 @@ type Msg
     | DecreaseCount
     | ResetCount
     | ChangeTextReverseInput String
+    | FormChangeName String
 
 
 type alias Markup =
@@ -64,6 +66,7 @@ type alias Model =
     , users : UserList
     , count : Int
     , textReverseInput : String
+    , formName : String
     }
 
 
@@ -87,6 +90,7 @@ model =
         ]
     , count = 0
     , textReverseInput = ""
+    , formName = ""
     }
 
 
@@ -113,6 +117,9 @@ update msg model =
 
         ChangeTextReverseInput value ->
             { model | textReverseInput = value }
+
+        FormChangeName name ->
+            { model | formName = name }
 
 
 renderTodoItems : TaskList -> Markup
@@ -220,6 +227,23 @@ renderTextReverseStuff model =
         ]
 
 
+
+-- renderFormField : String -> FormInputMessage -> Markup
+
+
+renderFormField placeholder onInputMessage =
+    Html.input
+        [ Html.Attributes.placeholder placeholder
+        , Html.Events.onInput onInputMessage
+        ]
+        []
+
+
+renderFormStuff : Model -> Markup
+renderFormStuff model =
+    Html.div [] [ renderFormField "Name" FormChangeName ]
+
+
 view : Model -> Markup
 view model =
     Html.div []
@@ -235,6 +259,8 @@ view model =
                 , renderCounterStuff model
                 , renderTitle "Text Reverse"
                 , renderTextReverseStuff model
+                , renderTitle "Form Section"
+                , renderFormStuff model
                 ]
             ]
         ]
