@@ -29,6 +29,8 @@ type Msg
     | ResetCount
     | ChangeTextReverseInput String
     | FormChangeName String
+    | FormChangePassword String
+    | FormChangePasswordConfirmation String
 
 
 type alias Markup =
@@ -67,6 +69,8 @@ type alias Model =
     , count : Int
     , textReverseInput : String
     , formName : String
+    , formPassword : String
+    , formPasswordConfirmation : String
     }
 
 
@@ -91,6 +95,8 @@ model =
     , count = 0
     , textReverseInput = ""
     , formName = ""
+    , formPassword = ""
+    , formPasswordConfirmation = ""
     }
 
 
@@ -120,6 +126,12 @@ update msg model =
 
         FormChangeName name ->
             { model | formName = name }
+
+        FormChangePassword password ->
+            { model | formPassword = password }
+
+        FormChangePasswordConfirmation password ->
+            { model | formPasswordConfirmation = password }
 
 
 renderTodoItems : TaskList -> Markup
@@ -228,20 +240,48 @@ renderTextReverseStuff model =
 
 
 
--- renderFormField : String -> FormInputMessage -> Markup
+-- renderFormField : String -> Msg String -> Markup
 
 
 renderFormField placeholder onInputMessage =
-    Html.input
-        [ Html.Attributes.placeholder placeholder
-        , Html.Events.onInput onInputMessage
+    Html.div []
+        [ Html.label [] [ Html.text placeholder ]
+        , Html.input
+            [ Html.Attributes.placeholder placeholder
+            , Html.Events.onInput onInputMessage
+            ]
+            []
         ]
-        []
+
+
+passwordsAreOK : String -> String -> Bool
+passwordsAreOK a b =
+    a == b
+
+
+getPasswordValidationText : Model -> String
+getPasswordValidationText model =
+    if (passwordsAreOK model.formPassword model.formPasswordConfirmation) then
+        "Good"
+    else
+        "Bad"
+
+
+renderFormValidation : Model -> Markup
+renderFormValidation model =
+    Html.div []
+        [ Html.text (getPasswordValidationText model)
+        ]
 
 
 renderFormStuff : Model -> Markup
 renderFormStuff model =
-    Html.div [] [ renderFormField "Name" FormChangeName ]
+    Html.div []
+        [ renderFormField "Name" FormChangeName
+        , renderFormField "Password" FormChangePassword
+        , renderFormField "Password Confirmation" FormChangePasswordConfirmation
+        , renderFormValidation model
+        ]
 
 
 view : Model -> Markup
