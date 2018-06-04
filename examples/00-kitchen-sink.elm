@@ -5,19 +5,16 @@ import Html.Attributes
 import Html.Events
 
 
-main =
-    Html.beginnerProgram
-        { model = model
-        , view = view
-        , update = update
-        }
-
-
-
-{-
-   > our view function is producing a Html Msg value. This means that it is a chunk of HTML that can produce Msg values.
-   https://guide.elm-lang.org/architecture/user_input/buttons.html
--}
+type alias Model =
+    { todoItems : TaskList
+    , visiblity : Visibility
+    , users : UserList
+    , count : Int
+    , textReverseInput : String
+    , formName : String
+    , formPassword : String
+    , formPasswordConfirmation : String
+    }
 
 
 type Msg
@@ -31,6 +28,22 @@ type Msg
     | FormChangeName String
     | FormChangePassword String
     | FormChangePasswordConfirmation String
+
+
+main : Program Never Model Msg
+main =
+    Html.beginnerProgram
+        { model = model
+        , view = view
+        , update = update
+        }
+
+
+
+{-
+   > our view function is producing a Html Msg value. This means that it is a chunk of HTML that can produce Msg values.
+   https://guide.elm-lang.org/architecture/user_input/buttons.html
+-}
 
 
 type alias Markup =
@@ -60,18 +73,6 @@ type User
 
 type alias UserList =
     List User
-
-
-type alias Model =
-    { todoItems : TaskList
-    , visiblity : Visibility
-    , users : UserList
-    , count : Int
-    , textReverseInput : String
-    , formName : String
-    , formPassword : String
-    , formPasswordConfirmation : String
-    }
 
 
 model : Model
@@ -261,7 +262,7 @@ passwordsAreOK a b =
 
 getPasswordValidationText : Model -> String
 getPasswordValidationText model =
-    if (passwordsAreOK model.formPassword model.formPasswordConfirmation) then
+    if passwordsAreOK model.formPassword model.formPasswordConfirmation then
         "Good"
     else
         "Bad"
