@@ -240,10 +240,6 @@ renderTextReverseStuff model =
         ]
 
 
-
--- renderFormField : String -> Msg String -> Markup
-
-
 renderFormField placeholder onInputMessage =
     Html.div []
         [ Html.label [] [ Html.text placeholder ]
@@ -260,9 +256,9 @@ passwordsAreOK a b =
     a == b
 
 
-getPasswordValidationText : Model -> String
-getPasswordValidationText model =
-    if passwordsAreOK model.formPassword model.formPasswordConfirmation then
+getPasswordValidationText : Bool -> String
+getPasswordValidationText theyMatch =
+    if theyMatch then
         "Good"
     else
         "Bad"
@@ -270,9 +266,17 @@ getPasswordValidationText model =
 
 renderFormValidation : Model -> Markup
 renderFormValidation model =
-    Html.div []
-        [ Html.text (getPasswordValidationText model)
+    let
+        ( color, message ) =
+            if passwordsAreOK model.formPassword model.formPasswordConfirmation then
+                ( "green", getPasswordValidationText True )
+            else
+                ( "red", getPasswordValidationText False )
+    in
+    Html.div
+        [ Html.Attributes.style [ ( "color", color ) ]
         ]
+        [ Html.text message ]
 
 
 renderFormStuff : Model -> Markup
